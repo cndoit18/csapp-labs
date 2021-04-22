@@ -53,3 +53,5 @@ dkms.conf
 
 # CSAPP Output
 btest
+ishow
+fshow
