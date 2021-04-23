@@ -175,7 +175,8 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  x = (x&0xAA) &((x>>8)&0xAA)&((x>>16)&0xAA)&((x>>24)&0xAA);
+  return !(x^0xAA);
 }
 /* 
  * negate - return -x 
@@ -185,7 +186,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x+1;
 }
 //3
 /* 
@@ -198,7 +199,7 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  return !!((0x2f+(~x+1))>>31)&((x+(~0x3a+1))>>31);
 }
 /* 
  * conditional - same as x ? y : z 
@@ -208,7 +209,8 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int mask = ~(!!x) +1;
+  return (mask&y)|(~mask&z);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -216,9 +218,12 @@ int conditional(int x, int y, int z) {
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
  *   Rating: 3
+    y > x - 1
+    0 > x - 1 - y
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int sign = (x>>31)^(y>>31); // same is 0, different is -1
+  return !!(sign&(x>>31))|!!((~sign)&((~y+x)>>31));
 }
 //4
 /* 
@@ -230,7 +235,11 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  x = x|(x>>16);
+  x = x|(x>>8);
+  x = x|(x>>4);
+  x = x|(x>>2);
+  return (~(x|(x>>1)))&1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
