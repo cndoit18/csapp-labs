@@ -254,7 +254,27 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int mask, sum;
+  x = (x >> 31)^x;
+  mask = ~(!!(x>>16))+1;
+  sum = mask&16;
+  x = (mask&(x>>16))|(~mask&(~((~0)<<16))&x);
+  mask = ~(!!(x>>8))+1;
+  sum += mask&8;
+  x = (mask&(x>>8))|(~mask&(x<<8>>8));
+
+  mask = ~(!!(x>>4))+1;
+  sum += mask&4;
+  x = (mask&(x>>4))|(~mask&(x<<4>>4));
+
+  mask = ~(!!(x>>2))+1;
+  sum += mask&2;
+  x = (mask&(x>>2))|(~mask&(x<<2>>2));
+
+  mask = ~(!!(x>>1))+1;
+  sum += mask&1;
+  x = (mask&(x>>1))|(~mask&(x<<1>>1));
+  return sum +x + 1;
 }
 //float
 /* 
